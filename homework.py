@@ -35,7 +35,6 @@ class Training:
         self.M_IN_KM: int = 1000 
     def get_distance(self) -> float:
         """Получить дистанцию в км.""" 
- 
         return (self.action * self.LEN_STEP) / self.M_IN_KM
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
@@ -43,10 +42,15 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         pass #Логика подсчета калорий для каждого вида тренировки будет своя
-
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
-        pass
+        message = InfoMessage (self.__class__.__name__,
+                               self.duration,
+                               self.get_distance(),
+                               self.get_mean_speed(),
+                               self.get_spent_calories()
+                               )
+        return(message.get_message())
 
 class Running(Training):
     """Тренировка: бег."""
