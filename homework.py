@@ -1,3 +1,5 @@
+from typing import Optional
+
 class InfoMessage:
     """Информационное сообщение о тренировке."""
 
@@ -9,11 +11,11 @@ class InfoMessage:
                  calories: float 
                 ):
         self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
-    def get_message(self):
+        self.duration = round(duration, 3)
+        self.distance = round(distance, 3)
+        self.speed = round(speed, 3)
+        self.calories = round(calories, 3)
+    def get_message(self) -> str:
         return (f'Тип тренировки: {self.training_type}; '
                f'Длительность: {self.duration} ч.; '
                f'Дистанция: {self.distance} км; '
@@ -102,20 +104,27 @@ class Swimming(Training):
     def get_spent_calories(self) -> float:
         coeff_calorie_1: float = 1.1
         coeff_calorie_2: int = 2
-        return ((self.get_mean_speed() + coeff_calorie_1) * coeff_calorie_2 * self.weight) 
+        return ((self.get_mean_speed() + coeff_calorie_1) * coeff_calorie_2 * self.weight)
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list) -> Optional[Training]:
     """Прочитать данные полученные от датчиков."""
-    #В теле функции должен быть словарь, 
-    #в котором сопоставляются коды тренировок и классы,
-    #которые нужно вызвать для каждого типа тренировки.
-
+    DICT_training = {'SWM': Swimming,
+                     'RUN': Running,
+                     'WLK': SportsWalking}
+    select_training = DICT_training[workout_type]                  
+    if workout_type == 'SWM':
+        return select_training(data[0],data[1],data[2],data[3],data[4])
+    elif workout_type == 'RUN':
+        return select_training(data[0],data[1],data[2])
+    elif workout_type == 'WLK':
+        return select_training(data[0],data[1],data[2],data[3])
+ 
 
 def main(training: Training) -> None:
     """Главная функция."""
-    #Проверить как работает
     info = training.show_training_info()
-    print(info.get_message())
+    print(info)
+
 
 # тестовые данные
 if __name__ == '__main__':
@@ -127,5 +136,5 @@ if __name__ == '__main__':
 
     for workout_type, data in packages:
         training = read_package(workout_type, data)
+        #print(training)
         main(training)
-
