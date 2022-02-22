@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional, Type
 
 
 class InfoMessage:
@@ -126,28 +126,23 @@ class Swimming(Training):
                 )
 
 
-def read_package(workout_type: str, data: list) -> str:
+def read_package(workout_type: str, data: list) -> Optional[Training]:
     """Прочитать данные полученные от датчиков."""
-    DICT_training = {'SWM': Swimming,
-                     'RUN': Running,
-                     'WLK': SportsWalking}
-    select_training = DICT_training[workout_type]
-    if workout_type == 'SWM':
-        return select_training(data[0], data[1], data[2], data[3], data[4])
-    elif workout_type == 'RUN':
-        return select_training(data[0], data[1], data[2])
-    elif workout_type == 'WLK':
-        return select_training(data[0], data[1], data[2], data[3])
+    DICT_training: Dict[str, Type[Training]] = {'SWM': Swimming,
+                                                'RUN': Running,
+                                                'WLK': SportsWalking}
+    if workout_type in DICT_training:
+        return DICT_training[workout_type](*data)
+    else:
+        raise ValueError(f'Такой тренировки нет: {workout_type}')
 
 
 def main(training: Training) -> None:
     """Главная функция."""
     info = training.show_training_info()
     print(info.get_message())
-    
 
 
-# тестовые данные
 if __name__ == '__main__':
     packages = [
         ('SWM', [720, 1, 80, 25, 40]),
